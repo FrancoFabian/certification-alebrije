@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "Árbol que nunca muere · Estudio",
+  "short_name": "Estudio ANQM",
+  "description": "Registro de obras artesanales y borradores de certificados.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0c0c0c",
+  "theme_color": "#0c0c0c",
+  "lang": "es-MX",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/brand-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
