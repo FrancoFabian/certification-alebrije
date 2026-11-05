@@ -1,5 +1,5 @@
 import type { Motif } from './certificate-model'
-import { PhotoPicker, PhotoThumb } from './PhotoPicker'
+import { PhotoPicker } from './PhotoPicker'
 
 export function MotifCard({ motif, index, total, onEdit, onDelete, onMove }: {
   motif: Motif; index: number; total: number
@@ -14,8 +14,10 @@ export function MotifCard({ motif, index, total, onEdit, onDelete, onMove }: {
         <button type="button" aria-label="Eliminar tira" onClick={onDelete}>×</button>
       </div>
     </div>
-    {motif.strip && <div className="motif-strip-preview"><span>CAPTURA DE LA GRECA</span>
-      <PhotoThumb photo={motif.strip}/></div>}
+    <label className="motif-include"><input type="checkbox" checked={motif.included !== false}
+      onChange={event => onEdit({ ...motif, included: event.target.checked })}/>
+      <span><strong>Conservar esta tira</strong><small>Si la desmarcas, se conserva en el borrador pero no se usará en el certificado.</small></span>
+    </label>
     <PhotoPicker title="Tira visual de la greca" help="Una imagen horizontal del patrón. En modo agente será el resultado del análisis; en manual puedes adjuntarla."
       photos={motif.strip ? [motif.strip] : []} limit={1}
       onChange={photos => onEdit({ ...motif, strip: photos[0] })}/>
