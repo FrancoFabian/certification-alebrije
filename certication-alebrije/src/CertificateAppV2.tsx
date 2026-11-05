@@ -3,7 +3,7 @@ import { emptyFields, normalizeFields } from './certificate-model'
 import type { Certificate, CertificateFields } from './certificate-model'
 import { listDrafts, saveDraft, deleteDraft } from './draft-storage'
 import { StudioIcon as Icon } from './StudioIcon'
-import { CertificateEditor } from './CertificateEditor'
+import { CertificateWizard } from './CertificateWizard'
 import './mobile.css'
 import './iconography.css'
 
@@ -107,7 +107,7 @@ export default function CertificateAppV2() {
           {feedback && <p className="feedback" role="status">{feedback}</p>}
         </section>
       </>}
-      {(page === 'crear' || page === 'vista') && <CertificateEditor
+      {(page === 'crear' || page === 'vista') && <CertificateWizard
         page={page} values={values} setValues={setValues} editing={editing !== null}
         onBack={() => go(page === 'crear' ? 'inicio' : 'crear')}
         onPreview={() => go('vista')} onSave={() => void save()}
