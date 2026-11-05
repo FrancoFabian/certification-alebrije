@@ -22,6 +22,7 @@ export type Motif = {
   /** Original photos supporting the extraction. */
   sourcePhotoIds?: string[]
   origin?: 'manual' | 'agente'
+  included?: boolean
 }
 export type CertificateFields = {
   obra: string
@@ -30,6 +31,7 @@ export type CertificateFields = {
   tecnicas: string
   medidas: string
   descripcion: string
+  tiempoElaboracion: string
   origen: string
   piecePhotos: Photo[]
   motifs: Motif[]
@@ -38,11 +40,11 @@ export type CertificateFields = {
   overflow: OverflowPolicy
 }
 export type Certificate = CertificateFields & { id: string; updated: string }
-export type TextField = 'obra' | 'autor' | 'materiales' | 'tecnicas' | 'medidas' | 'descripcion' | 'origen'
+export type TextField = 'obra' | 'autor' | 'materiales' | 'tecnicas' | 'medidas' | 'descripcion' | 'tiempoElaboracion' | 'origen'
 
 export function emptyFields(): CertificateFields {
   return {
-    obra: '', autor: '', materiales: '', tecnicas: '', medidas: '', descripcion: '',
+    obra: '', autor: '', materiales: '', tecnicas: '', medidas: '', descripcion: '', tiempoElaboracion: '',
     origen: 'San Martín Tilcajete, Oaxaca', piecePhotos: [], motifs: [],
     iconographyMode: 'pendiente', orientation: 'vertical', overflow: 'automatico',
   }
@@ -56,7 +58,7 @@ function isPhoto(item: unknown): item is Photo {
 
 export function normalizeFields(input: Partial<CertificateFields>): CertificateFields {
   const base = emptyFields()
-  const textKeys: TextField[] = ['obra', 'autor', 'materiales', 'tecnicas', 'medidas', 'descripcion', 'origen']
+  const textKeys: TextField[] = ['obra', 'autor', 'materiales', 'tecnicas', 'medidas', 'descripcion', 'tiempoElaboracion', 'origen']
   for (const key of textKeys) if (typeof input[key] === 'string') base[key] = input[key]
   base.orientation = input.orientation === 'horizontal' ? 'horizontal' : 'vertical'
   base.overflow = input.overflow === 'siempre' || input.overflow === 'consultar' ? input.overflow : 'automatico'
@@ -73,6 +75,7 @@ export function normalizeFields(input: Partial<CertificateFields>): CertificateF
         sourcePhotoIds: Array.isArray(item.sourcePhotoIds)
           ? item.sourcePhotoIds.filter(id => typeof id === 'string') : [],
         origin: item.origin === 'agente' ? 'agente' : 'manual',
+        included: item.included !== false,
       })) : []
   if (input.iconographyMode === 'agente' || input.iconographyMode === 'manual' ||
       input.iconographyMode === 'omitir' || input.iconographyMode === 'pendiente') {
