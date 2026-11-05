@@ -7,7 +7,7 @@ export function MotifCard({ motif, index, total, onEdit, onDelete, onMove }: {
 }) {
   return <article className="motif-card">
     <div className="motif-card-head">
-      <div><span>TIRA {String(index + 1).padStart(2, '0')}</span><strong>{motif.name || 'Patrón sin identificar'}</strong></div>
+      <div><span>{motif.origin === 'agente' ? 'DETECCIÓN ASISTIDA' : 'CAPTURA MANUAL'} · {String(index + 1).padStart(2, '0')}</span><strong>{motif.name || 'Patrón sin identificar'}</strong></div>
       <div className="motif-order">
         <button type="button" disabled={index === 0} aria-label="Subir tira" onClick={() => onMove(-1)}>↑</button>
         <button type="button" disabled={index === total - 1} aria-label="Bajar tira" onClick={() => onMove(1)}>↓</button>
