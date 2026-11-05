@@ -6,6 +6,7 @@ import { StudioIcon as Icon } from './StudioIcon'
 import { CertificateWizard } from './CertificateWizard'
 import './mobile.css'
 import './iconography.css'
+import './wizard.css'
 
 type Page = 'inicio' | 'crear' | 'vista' | 'archivo'
 function displayDate(iso: string) {
