@@ -1,1 +1,1 @@
-export { default } from './CertificateApp'
+export { default } from './CertificateAppV2'
