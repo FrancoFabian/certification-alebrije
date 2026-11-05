@@ -4,15 +4,15 @@ PWA móvil para documentar piezas artesanales. El flujo visual parte del mock pr
 
 ## Desarrollo (solo Bun)
 
-\`\`\`bash
+```bash
 cd certication-alebrije
 bun install --frozen-lockfile
 bun run dev
 bun run build
 bun run lint
-\`\`\`
+```
 
-Se respetan Bun, bun.lock, React, Vite, TypeScript, Oxlint y la ruta original \`certication-alebrije/\`.
+Se respetan Bun, bun.lock, React, Vite, TypeScript, Oxlint y la ruta original `certication-alebrije/`.
 
 ## Formulario: cinco pasos
 
