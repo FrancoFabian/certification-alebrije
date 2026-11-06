@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import type { Dispatch, SetStateAction, FormEvent } from 'react'
 import type { Certificate, CertificateFields, CatalogDetail, TextField, Orientation, OverflowPolicy } from './certificate-model'
+import { formatDuration, formatDimensions } from './certificate-model'
+import type { Duration, Dimensions } from './certificate-model'
+import { DurationPicker, DimensionPicker } from './MeasureControls'
 import { suggestedArtisans, suggestedTags } from './reuse-catalog'
 import { ArtisanCombobox, TagInput, CatalogDescriptions } from './ReusableFields'
 import { StudioIcon as Icon } from './StudioIcon'
@@ -15,8 +18,6 @@ const identity: Array<{ key: TextField; label: string; hint: string; required?: 
   { key: 'origen', label: 'Lugar de origen', hint: 'Ej. San Martín Tilcajete, Oaxaca' },
 ]
 const process: Array<{ key: TextField; label: string; hint: string; multiline?: boolean }> = [
-  { key: 'tiempoElaboracion', label: 'Tiempo de elaboración', hint: 'Ej. 11 meses' },
-  { key: 'medidas', label: 'Dimensiones', hint: 'Ej. 30 × 18 × 12 cm' },
   { key: 'descripcion', label: 'Descripción general', hint: 'Características de la pieza...', multiline: true },
 ]
 const orientations: Array<{ id: Orientation; name: string; hint: string }> = [
@@ -69,6 +70,26 @@ export function CertificateWizard({ page, values, setValues, history, onBack, on
     setValues(previous => kind === 'material'
       ? { ...previous, materialItems: items, materiales: names }
       : { ...previous, techniqueItems: items, tecnicas: names })
+  }
+  function updateDuration(next: Duration) {
+    setValues(previous => ({
+      ...previous,
+      duration: next,
+      tiempoElaboracion: formatDuration(next) || (
+        previous.duration.quantity === null ? previous.tiempoElaboracion : ''
+      ),
+    }))
+  }
+  function updateDimensions(next: Dimensions) {
+    setValues(previous => {
+      const text = formatDimensions(next)
+      const wasLegacy = [previous.dimensions.widthCm, previous.dimensions.heightCm, previous.dimensions.depthCm]
+        .every(v => v === null)
+      return {
+        ...previous, dimensions: next,
+        medidas: text || (wasLegacy ? previous.medidas : ''),
+      }
+    })
   }
   function setField(field: TextField, value: string) {
     setValues(previous => ({ ...previous, [field]: value }))
@@ -137,6 +158,8 @@ export function CertificateWizard({ page, values, setValues, history, onBack, on
           <TagInput title="Técnicas de elaboración" hint="Puedes reutilizar técnicas de otras piezas."
             items={values.techniqueItems} suggestions={techniqueSuggestions}
             onChange={items => updateCatalog('technique', items)}/>
+          <DurationPicker value={values.duration} legacy={values.tiempoElaboracion} onChange={updateDuration}/>
+          <DimensionPicker value={values.dimensions} legacy={values.medidas} onChange={updateDimensions}/>
           {process.map(item => <Field key={item.key} item={item} value={values[item.key]}
             onChange={value => setField(item.key, value)}/>)}
           <CatalogDescriptions materials={values.materialItems} techniques={values.techniqueItems}
