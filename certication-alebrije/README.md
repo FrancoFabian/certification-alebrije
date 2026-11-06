@@ -25,6 +25,15 @@ Se respetan Bun, bun.lock, React, Vite, TypeScript, Oxlint y la ruta original `c
 4. **Selección de tiras:** conservar o excluir cada tira sin perder el material de referencia; ordenar y clasificar como principal o anexo. Nombre y significado son opcionales y los aporta el artesano.
 5. **Formato del certificado:** orientación vertical/horizontal y preferencia de anexo automático, siempre o con confirmación. Vista previa conceptual.
 
+## Captura reutilizable de materiales, técnicas y artesanos
+
+- **Artesano**: campo con sugerencias de nombres previamente guardados en el archivo local (el más reciente aparece primero). Permite escribir un nombre nuevo; nunca cambia por su cuenta el autor de una obra.
+- **Materiales y técnicas**: selectores de etiquetas con búsqueda, sugerencias de obras anteriores y ejemplos iniciales. Permiten agregar y quitar etiquetas, incluyendo una nueva escrita por Pedro.
+- **Detalles de elaboración**: sección separada, opcional, con una descripción independiente por cada material y técnica seleccionados. Las descripciones pertenecen a cada obra y no se copian automáticamente de otra.
+- **Compatibilidad**: los borradores antiguos con texto libre siguen cargándose sin perderlo; el texto anterior se convierte en una etiqueta conservadora y el artesano puede reorganizarla.
+- **Persistencia**: catálogo sugerido derivado de los borradores guardados en IndexedDB. No hay todavía un catálogo en Supabase ni sincronización entre dispositivos.
+- **Pruebas**: `bun test` valida migración, deduplicación y sugerencias, sin instalar librerías adicionales.
+
 ## Persistencia actual
 
 Los borradores y las imágenes se almacenan localmente en **IndexedDB**, con migración de los borradores anteriores de localStorage. No hay copia remota ni sincronización. Las fotos se guardan como Blob; cuidado con límites de almacenamiento del navegador.
