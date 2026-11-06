@@ -1,32 +1,90 @@
-# React + TypeScript + Vite
+# Árbol que nunca muere · Estudio de certificados
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+PWA móvil para documentar piezas artesanales. El flujo visual parte del mock proporcionado por el usuario.
 
-Currently, two official plugins are available:
+## Desarrollo (solo Bun)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+cd certication-alebrije
+bun install --frozen-lockfile
+bun run dev
+bun run build
+bun run lint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Se respetan Bun, bun.lock, React, Vite, TypeScript, Oxlint y la ruta original `certication-alebrije/`.
+
+## Formulario: cinco pasos
+
+1. **Datos de la obra:** nombre de la obra y autor/taller (necesarios para avanzar), origen.
+2. **Elaboración:** tiempo y medidas guiadas primero; después materiales, técnicas y descripción.
+3. **Captura de grecas:** elegir **agente**, **manual** u **omitir**.
+   - Agente: guía inicial por frente, lateral derecho, lateral izquierdo, reverso, superior y acercamientos; fotografías originales conservadas en IndexedDB.
+   - Manual: opcionalmente subir vistas generales y continuar con tiras/grecas creadas o fotografiadas por el artesano.
+   - Omitir: no mostrar la iconografía en el certificado, sin borrar la información guardada.
+4. **Selección de tiras:** conservar o excluir cada tira sin perder el material de referencia; ordenar y clasificar como principal o anexo. Nombre y significado son opcionales y los aporta el artesano.
+5. **Formato del certificado:** orientación vertical/horizontal y preferencia de anexo automático, siempre o con confirmación. Vista previa conceptual.
+
+## Captura reutilizable de materiales, técnicas y artesanos
+
+- **Artesano**: campo con sugerencias de nombres previamente guardados en el archivo local (el más reciente aparece primero). Permite escribir un nombre nuevo; nunca cambia por su cuenta el autor de una obra.
+- **Materiales y técnicas**: selectores de etiquetas con búsqueda, sugerencias de obras anteriores y ejemplos iniciales. Permiten agregar y quitar etiquetas, incluyendo una nueva escrita por Pedro.
+- **Detalles de elaboración**: sección separada, opcional, con una descripción independiente por cada material y técnica seleccionados. Las descripciones pertenecen a cada obra y no se copian automáticamente de otra.
+- **Compatibilidad**: los borradores antiguos con texto libre siguen cargándose sin perderlo; el texto anterior se convierte en una etiqueta conservadora y el artesano puede reorganizarla.
+- **Persistencia**: catálogo sugerido derivado de los borradores guardados en IndexedDB. No hay todavía un catálogo en Supabase ni sincronización entre dispositivos.
+- **Pruebas**: `bun test` valida migración, deduplicación y sugerencias, sin instalar librerías adicionales.
+
+## Tiempo y medidas: captura táctil estructurada
+
+El paso **Elaboración** ahora comienza con dos controles pensados para celular:
+
+- **Tiempo de elaboración:** cantidad con botones grandes (+/−), entrada numérica, accesos rápidos (1, 3, 6, 12) y selector de días, semanas, meses o años. Se almacena como `duration.quantity` + `duration.unit`.
+- **Dimensiones:** ancho, alto y profundidad independientes; las tres entradas utilizan teclado decimal y muestran un **volumen isométrico vectorial SVG** que responde a los valores y resalta la dimensión que se está editando.
+- **Unidades:** centímetros, pulgadas y metros. Internamente las longitudes se guardan en **centímetros**, y al cambiar de unidad solo cambia su presentación, no la medida física.
+- **Accesibilidad:** controles grandes para el tacto, etiquetas de lectura, y validación de longitudes positivas. No se inventan medidas ausentes.
+- **Compatibilidad:** los borradores antiguos con tiempo o medidas de texto libre conservan sus cadenas; al sustituirlos con campos estructurados, el texto resumido sigue disponible para la vista previa.
+- **Costo y compatibilidad:** render SVG sin Three.js, WebGL ni dependencias nuevas; adecuado para la PWA móvil. El gráfico es un esquema isométrico, **no una reproducción exacta ni a escala certificada de la pieza**.
+- **Pruebas:** `bun test` valida formatos, normalización, unidades y borradores anteriores.
+
+## Persistencia actual
+
+Los borradores y las imágenes se almacenan localmente en **IndexedDB**, con migración de los borradores anteriores de localStorage. No hay copia remota ni sincronización. Las fotos se guardan como Blob; cuidado con límites de almacenamiento del navegador.
+
+## Estado real del agente
+
+El modo agente tiene **solo el flujo de captura y revisión preparado**. No se ha integrado un proveedor de IA ni un backend para realizar identificación de grecas o extracción de tiras. El botón de análisis aparece deshabilitado deliberadamente.
+
+Cuando exista la integración, el agente debe:
+- Analizar fotos de varios ángulos; solicitar vistas extra cuando no sean suficientes.
+- Detectar regiones candidatas de grecas y preparar **tiras visuales fieles a las capturas originales**; no inventar geometrías ni figuras.
+- Entregar candidatos con evidencia/foto de origen; el artesano confirma las tiras.
+- Permitir al artesano conservar, descartar, ordenar y enviar a primer plano o anexo.
+- **No inferir ni presentar como hechos significados culturales no corroborados.** El campo de significado es del artesano.
+
+El contrato técnico de visión y la generación/rectificación de imágenes quedan pendientes de una API segura del lado servidor. No almacenar claves de proveedor en la PWA.
+
+## Probar la PWA instalada desde un celular (VS Code Tunnel)
+
+Desde el directorio `certication-alebrije/`, detener primero `bun run dev` (Ctrl+C) y ejecutar:
+
+```bash
+bun install --frozen-lockfile
+bun run build
+bun scripts/verify-pwa.mjs
+bun run preview --host 0.0.0.0 --port 5173
+```
+
+Usar el panel **Ports** de VS Code para reenviar el puerto 5173 y abrir la **URL HTTPS** del túnel directamente en Chrome Android o Safari iOS (no dentro de la vista previa embebida del editor).
+
+- **Android:** menú de Chrome ⋮ → Instalar aplicación / Añadir a pantalla principal. Si el navegador permite el aviso nativo, también puede aparecer desde la propia aplicación.
+- **iPhone:** Safari → Compartir → Añadir a pantalla de inicio.
+- El service worker se registra solo en el build de producción (modo preview); `bun run dev` NO debe usarse como prueba de funcionamiento offline.
+- Para probar: instalar, abrir y, tras cargar completamente la app, activar modo avión y verificar que abre. Los datos siguen en IndexedDB.
+- **Advertencia:** los túneles de desarrollo pueden cambiar de URL o cerrarse. No son hosting permanente; los datos locales quedan asociados al origen exacto. No se debe usar el túnel como sistema productivo ni exponer fotos de clientes sin control de acceso.
+
+## Limitaciones actuales
+
+- No genera PDFs definitivos ni implementa paginación real o capas de editor.
+- Los ajustes vertical/horizontal y de anexos son preferencias que se guardan.
+- No se ha realizado QA táctil ni de cámara en Android/iPhone.
+- Sin Supabase; los borradores solo están en el dispositivo. **No usarlos para entregar certificados oficiales hasta que existan respaldo y validaciones.**

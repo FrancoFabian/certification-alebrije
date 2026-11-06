@@ -1,0 +1,26 @@
+name: Bun checks
+
+on:
+  push:
+    branches: [main, feat/mobile-certificate-foundation]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: certication-alebrije
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies from existing Bun lockfile
+        run: bun install --frozen-lockfile
+      - name: TypeScript and Vite build
+        run: bun run build
+      - name: Oxlint
+        run: bun run lint
+      - name: Catalog unit tests
+        run: bun test
+      - name: Verify installable PWA assets
+        run: bun scripts/verify-pwa.mjs
