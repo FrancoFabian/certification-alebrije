@@ -36,11 +36,6 @@ export function IconographyCapture({ value, onUpdate }: {
   const filled = captureAngles.filter(angle => value.piecePhotos.some(photo => photo.angle === angle.id))
   const next = captureAngles.find(angle => !value.piecePhotos.some(photo => photo.angle === angle.id))
   return <div className="flow-stack">
-    <div className="step-intro">
-      <span className="eyebrow">PASO 03 · OPCIONAL</span>
-      <h2>¿Cómo capturamos<br/><em>las grecas?</em></h2>
-      <p>Puedes apoyarte en un agente, registrarlas a mano u omitirlas.</p>
-    </div>
     <fieldset className="flow-mode-fieldset">
       <legend>Selecciona un modo</legend>
       {modes.map(option => <label key={option.mode} className={'mode-tile' + (value.iconographyMode === option.mode ? ' selected' : '')}>
