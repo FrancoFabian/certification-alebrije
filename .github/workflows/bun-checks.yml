@@ -20,3 +20,5 @@ jobs:
         run: bun run build
       - name: Oxlint
         run: bun run lint
+      - name: Verify installable PWA assets
+        run: bun scripts/verify-pwa.mjs
