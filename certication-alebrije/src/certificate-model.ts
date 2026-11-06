@@ -68,15 +68,14 @@ export function dimensionToCm(value: number, unit: DimensionUnit): number {
 }
 
 export function formatDimensions(value: Dimensions): string {
-  const labels = [
+  const labels: Array<[string, number | null]> = [
     ['Ancho', value.widthCm],
     ['Alto', value.heightCm],
     ['Prof.', value.depthCm],
-  ] as const
-  return labels
-    .filter((item): item is readonly [string, number] => item[1] !== null)
-    .map(([name, cm]) => name + ' ' + formatDimension(dimensionToDisplay(cm, value.unit)) + ' ' + value.unit)
-    .join(' · ')
+  ]
+  return labels.flatMap(([name, cm]): string[] => cm === null ? [] : [
+    name + ' ' + formatDimension(dimensionToDisplay(cm, value.unit)) + ' ' + value.unit,
+  ]).join(' · ')
 }
 
 function normalizeDuration(value: unknown): Duration {
