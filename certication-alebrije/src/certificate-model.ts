@@ -26,6 +26,81 @@ export type Motif = {
 }
 export type CatalogDetail = { id: string; name: string; description: string }
 
+export type DurationUnit = 'dias' | 'semanas' | 'meses' | 'anios'
+export type Duration = { quantity: number | null; unit: DurationUnit }
+export type DimensionUnit = 'cm' | 'in' | 'm'
+/** Canonical length values are centimeters. Unit is only the display preference. */
+export type Dimensions = {
+  widthCm: number | null
+  heightCm: number | null
+  depthCm: number | null
+  unit: DimensionUnit
+}
+
+export const emptyDuration = (): Duration => ({ quantity: null, unit: 'meses' })
+export const emptyDimensions = (): Dimensions => ({
+  widthCm: null, heightCm: null, depthCm: null, unit: 'cm',
+})
+
+export function validDimension(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 && value <= 1_000_000
+    ? value : null
+}
+
+export function formatDimension(value: number): string {
+  return new Intl.NumberFormat('es-MX', { maximumFractionDigits: 3 }).format(value)
+}
+
+export function formatDuration(value: Duration): string {
+  const count = value.quantity
+  if (count === null || !Number.isInteger(count) || count < 1) return ''
+  const singular = { dias: 'día', semanas: 'semana', meses: 'mes', anios: 'año' }
+  const plural = { dias: 'días', semanas: 'semanas', meses: 'meses', anios: 'años' }
+  return count + ' ' + (count === 1 ? singular[value.unit] : plural[value.unit])
+}
+
+export function dimensionToDisplay(cm: number, unit: DimensionUnit): number {
+  return unit === 'cm' ? cm : unit === 'm' ? cm / 100 : cm / 2.54
+}
+
+export function dimensionToCm(value: number, unit: DimensionUnit): number {
+  return unit === 'cm' ? value : unit === 'm' ? value * 100 : value * 2.54
+}
+
+export function formatDimensions(value: Dimensions): string {
+  const labels = [
+    ['Ancho', value.widthCm],
+    ['Alto', value.heightCm],
+    ['Prof.', value.depthCm],
+  ] as const
+  return labels
+    .filter((item): item is readonly [string, number] => item[1] !== null)
+    .map(([name, cm]) => name + ' ' + formatDimension(dimensionToDisplay(cm, value.unit)) + ' ' + value.unit)
+    .join(' · ')
+}
+
+function normalizeDuration(value: unknown): Duration {
+  const base = emptyDuration()
+  if (!value || typeof value !== 'object') return base
+  const input = value as Partial<Duration>
+  base.unit = input.unit === 'dias' || input.unit === 'semanas' || input.unit === 'anios'
+    ? input.unit : 'meses'
+  base.quantity = typeof input.quantity === 'number' && Number.isInteger(input.quantity)
+    && input.quantity >= 1 && input.quantity <= 9999 ? input.quantity : null
+  return base
+}
+
+function normalizeDimensions(value: unknown): Dimensions {
+  const base = emptyDimensions()
+  if (!value || typeof value !== 'object') return base
+  const input = value as Partial<Dimensions>
+  base.unit = input.unit === 'm' || input.unit === 'in' ? input.unit : 'cm'
+  base.widthCm = validDimension(input.widthCm)
+  base.heightCm = validDimension(input.heightCm)
+  base.depthCm = validDimension(input.depthCm)
+  return base
+}
+
 export type CertificateFields = {
   obra: string
   autor: string
@@ -34,8 +109,10 @@ export type CertificateFields = {
   materialItems: CatalogDetail[]
   techniqueItems: CatalogDetail[]
   medidas: string
+  dimensions: Dimensions
   descripcion: string
   tiempoElaboracion: string
+  duration: Duration
   origen: string
   piecePhotos: Photo[]
   motifs: Motif[]
@@ -48,7 +125,7 @@ export type TextField = 'obra' | 'autor' | 'materiales' | 'tecnicas' | 'medidas'
 
 export function emptyFields(): CertificateFields {
   return {
-    obra: '', autor: '', materiales: '', tecnicas: '', materialItems: [], techniqueItems: [], medidas: '', descripcion: '', tiempoElaboracion: '',
+    obra: '', autor: '', materiales: '', tecnicas: '', materialItems: [], techniqueItems: [], medidas: '', dimensions: emptyDimensions(), descripcion: '', tiempoElaboracion: '', duration: emptyDuration(),
     origen: 'San Martín Tilcajete, Oaxaca', piecePhotos: [], motifs: [],
     iconographyMode: 'pendiente', orientation: 'vertical', overflow: 'automatico',
   }
@@ -88,6 +165,12 @@ export function normalizeFields(input: Partial<CertificateFields>): CertificateF
   base.techniqueItems = normalizeDetails(input.techniqueItems, base.tecnicas, 'technique')
   base.materiales = base.materialItems.map(item => item.name).join(', ')
   base.tecnicas = base.techniqueItems.map(item => item.name).join(', ')
+  base.duration = normalizeDuration(input.duration)
+  base.dimensions = normalizeDimensions(input.dimensions)
+  if (base.duration.quantity !== null) base.tiempoElaboracion = formatDuration(base.duration)
+  if ([base.dimensions.widthCm, base.dimensions.heightCm, base.dimensions.depthCm].some(value => value !== null)) {
+    base.medidas = formatDimensions(base.dimensions)
+  }
   base.orientation = input.orientation === 'horizontal' ? 'horizontal' : 'vertical'
   base.overflow = input.overflow === 'siempre' || input.overflow === 'consultar' ? input.overflow : 'automatico'
   base.piecePhotos = Array.isArray(input.piecePhotos) ? input.piecePhotos.filter(isPhoto) : []
