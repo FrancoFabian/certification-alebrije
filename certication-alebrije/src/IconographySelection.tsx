@@ -33,10 +33,8 @@ export function IconographySelection({ value, onUpdate, onGoCapture }: {
   const secondary = selected.filter(motif => motif.placement === 'anexo')
 
   if (value.iconographyMode === 'omitir') return <div className="flow-stack">
-    <div className="step-intro"><span className="eyebrow">PASO 04 · OPCIONAL</span>
-      <h2>Sin iconografía<br/><em>por ahora.</em></h2>
-      <p>No se mostrarán tiras ni símbolos en el certificado. Tus datos anteriores quedan guardados por si cambias de opinión.</p>
-    </div>
+    <p className="flow-step-help">Se omitirán las grecas del certificado. La información capturada se conservará si cambias de modo.</p>
+
     <button type="button" className="flow-secondary-link" onClick={onGoCapture}>Cambiar modo de captura</button>
   </div>
 
