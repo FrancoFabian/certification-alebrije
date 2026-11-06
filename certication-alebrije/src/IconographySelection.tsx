@@ -39,11 +39,6 @@ export function IconographySelection({ value, onUpdate, onGoCapture }: {
   </div>
 
   return <div className="flow-stack">
-    <div className="step-intro">
-      <span className="eyebrow">PASO 04 · SELECCIÓN</span>
-      <h2>Elige las tiras<br/><em>importantes.</em></h2>
-      <p>Conserva los patrones que quieras mostrar y decide cuáles son principales y cuáles pueden pasar al anexo.</p>
-    </div>
     <div className="selection-stats">
       <div><strong>{selected.length}</strong><span>Conservadas</span></div>
       <div><strong>{primary.length}</strong><span>Principales</span></div>
