@@ -113,7 +113,7 @@ export default function CertificateAppV2() {
         </section>
       </>}
       {(page === 'crear' || page === 'vista') && <CertificateWizard key={wizardRevision}
-        page={page} values={values} setValues={setValues} editing={editing !== null}
+        page={page} values={values} setValues={setValues} history={drafts} editing={editing !== null}
         onBack={() => go(page === 'crear' ? 'inicio' : 'crear')}
         onPreview={() => go('vista')} onSave={() => void save()}
         saving={saving} feedback={feedback}/>}
