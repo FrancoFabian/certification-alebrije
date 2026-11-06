@@ -152,19 +152,19 @@ export function CertificateWizard({ page, values, setValues, history, onBack, on
           <p className="flow-muted-note">Los artesanos guardados aparecerán como sugerencias para las próximas piezas.</p>
         </>}
         {step === 1 && <>
+          <DurationPicker value={values.duration} legacy={values.tiempoElaboracion} onChange={updateDuration}/>
+          <DimensionPicker value={values.dimensions} legacy={values.medidas} onChange={updateDimensions}/>
           <TagInput title="Materiales" hint="Selecciona los materiales que se usaron o añade uno nuevo."
             items={values.materialItems} suggestions={materialSuggestions}
             onChange={items => updateCatalog('material', items)}/>
           <TagInput title="Técnicas de elaboración" hint="Puedes reutilizar técnicas de otras piezas."
             items={values.techniqueItems} suggestions={techniqueSuggestions}
             onChange={items => updateCatalog('technique', items)}/>
-          <DurationPicker value={values.duration} legacy={values.tiempoElaboracion} onChange={updateDuration}/>
-          <DimensionPicker value={values.dimensions} legacy={values.medidas} onChange={updateDimensions}/>
-          {process.map(item => <Field key={item.key} item={item} value={values[item.key]}
-            onChange={value => setField(item.key, value)}/>)}
           <CatalogDescriptions materials={values.materialItems} techniques={values.techniqueItems}
             onMaterials={items => updateCatalog('material', items)}
             onTechniques={items => updateCatalog('technique', items)}/>
+          {process.map(item => <Field key={item.key} item={item} value={values[item.key]}
+            onChange={value => setField(item.key, value)}/>)}
         </>}
         {step === 2 && <IconographyCapture value={values} onUpdate={setValues}/>}
         {step === 3 && <IconographySelection value={values} onUpdate={setValues} onGoCapture={() => jump(2)}/>}
