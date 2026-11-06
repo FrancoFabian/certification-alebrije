@@ -7,7 +7,7 @@ import { IconographyCapture } from './IconographyCapture'
 import { IconographySelection } from './IconographySelection'
 import { IconographySummary } from './IconographySummary'
 
-const stages = ['Identidad', 'Elaboración', 'Grecas', 'Selección', 'Documento']
+const stages = ['Datos de la obra', 'Elaboración', 'Captura de grecas', 'Selección de tiras', 'Formato del certificado']
 const identity: Array<{ key: TextField; label: string; hint: string; required?: boolean }> = [
   { key: 'obra', label: 'Nombre de la obra', hint: 'Ej. Fusión toro-caracol', required: true },
   { key: 'autor', label: 'Artesano o taller responsable', hint: 'Nombre del autor o del taller', required: true },
@@ -40,13 +40,13 @@ function Field({ item, value, onChange }: {
         placeholder={item.hint} onChange={event => onChange(event.target.value)}/>}
   </label>
 }
-const lead = [
-  { top: 'PASO 01 · LO ESENCIAL', a: 'Primero, la', b: 'obra.', note: '¿Qué pieza estamos certificando y quién la realizó?' },
-  { top: 'PASO 02 · EL PROCESO', a: 'Cómo nació', b: 'la pieza.', note: 'Materiales, técnica y detalles que la distinguen.' },
-  { top: '', a: '', b: '', note: '' },
-  { top: '', a: '', b: '', note: '' },
-  { top: 'PASO 05 · EL FORMATO', a: 'Ya casi está', b: 'listo.', note: 'Elige el formato y revisa antes de finalizar.' },
-]
+const stepHelp = [
+  'Identifica la pieza y a su artesano.',
+  'Materiales y técnicas utilizadas.',
+  'Elige cómo documentar las grecas.',
+  'Decide qué tiras se muestran.',
+  'Configura la orientación y las páginas.',
+] as const
 
 export function CertificateWizard({ page, values, setValues, onBack, onPreview, onSave, saving, feedback, editing }: {
   page: 'crear' | 'vista'
@@ -101,7 +101,7 @@ export function CertificateWizard({ page, values, setValues, onBack, onPreview, 
       <button type="button" aria-label="Volver" onClick={backward}><Icon name="back"/></button>
       <div><small>{page === 'vista' ? 'DOCUMENTO / VISTA' : 'CERTIFICADO / CAPTURA'}</small>
         <h1>{page === 'vista' ? 'Vista previa' : editing ? 'Editar obra' : 'Nueva obra'}</h1></div>
-      <span>{page === 'vista' ? 'VISTA' : (step + 1) + ' / 5'}</span>
+      <span>{page === 'vista' ? 'VISTA' : 'BORRADOR'}</span>
     </header>
     {page === 'crear' ? <>
       <div className="wizard-progress" role="progressbar" aria-valuemin={1} aria-valuemax={5} aria-valuenow={step + 1}
@@ -109,14 +109,11 @@ export function CertificateWizard({ page, values, setValues, onBack, onPreview, 
         {stages.map((item, index) => <span key={item}
           className={index === step ? 'current' : index < step ? 'done' : ''} title={item}/>)}
       </div>
-      <div className="wizard-step-label"><span>{stages[step]}</span><span>{step + 1} DE 5</span></div>
+      <div className="wizard-step-label">
+        <div><h2>{stages[step]}</h2><p>{stepHelp[step]}</p></div>
+        <span>{step + 1} de 5</span>
+      </div>
       <form className="field-list wizard-form" onSubmit={next} noValidate>
-        {(step === 0 || step === 1 || step === 4) &&
-          <div className="step-intro">
-            <span className="eyebrow">{lead[step].top}</span>
-            <h2>{lead[step].a}<br/><em>{lead[step].b}</em></h2>
-            <p>{lead[step].note}</p>
-          </div>}
         {step === 0 && <>
           {identity.map(item => <Field key={item.key} item={item} value={values[item.key]}
             onChange={value => setField(item.key, value)}/>)}
