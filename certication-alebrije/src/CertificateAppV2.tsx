@@ -24,6 +24,7 @@ export default function CertificateAppV2() {
   const [term, setTerm] = useState('')
   const [feedback, setFeedback] = useState('')
   const [saving, setSaving] = useState(false)
+  const [wizardRevision, setWizardRevision] = useState(0)
 
   useEffect(() => {
     let active = true
@@ -37,10 +38,11 @@ export default function CertificateAppV2() {
     setFeedback('')
     window.scrollTo(0, 0)
   }
-  function start() { setValues(emptyFields()); setEditing(null); go('crear') }
+  function start() { setValues(emptyFields()); setEditing(null); setWizardRevision(value => value + 1); go('crear') }
   function open(item: Certificate) {
     setValues(normalizeFields(item))
     setEditing(item.id)
+    setWizardRevision(value => value + 1)
     go('crear')
   }
   async function save() {
@@ -110,7 +112,7 @@ export default function CertificateAppV2() {
           {feedback && <p className="feedback" role="status">{feedback}</p>}
         </section>
       </>}
-      {(page === 'crear' || page === 'vista') && <CertificateWizard
+      {(page === 'crear' || page === 'vista') && <CertificateWizard key={wizardRevision}
         page={page} values={values} setValues={setValues} editing={editing !== null}
         onBack={() => go(page === 'crear' ? 'inicio' : 'crear')}
         onPreview={() => go('vista')} onSave={() => void save()}
