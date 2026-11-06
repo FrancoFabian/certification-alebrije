@@ -4,6 +4,7 @@ import type { Certificate, CertificateFields } from './certificate-model'
 import { listDrafts, saveDraft, deleteDraft } from './draft-storage'
 import { StudioIcon as Icon } from './StudioIcon'
 import { CertificateWizard } from './CertificateWizard'
+import { InstallPwa } from './InstallPwa'
 import './mobile.css'
 import './iconography.css'
 import './wizard.css'
@@ -105,6 +106,7 @@ export default function CertificateAppV2() {
           <button type="button" className="text-action" onClick={() => go('archivo')}>
             Ver archivo completo <Icon name="arrow" size={18}/>
           </button>
+          <InstallPwa/>
           {feedback && <p className="feedback" role="status">{feedback}</p>}
         </section>
       </>}
