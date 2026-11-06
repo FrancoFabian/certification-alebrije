@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { Dispatch, SetStateAction, FormEvent } from 'react'
-import type { CertificateFields, TextField, Orientation, OverflowPolicy } from './certificate-model'
+import type { Certificate, CertificateFields, CatalogDetail, TextField, Orientation, OverflowPolicy } from './certificate-model'
+import { suggestedArtisans, suggestedTags } from './reuse-catalog'
+import { ArtisanCombobox, TagInput, CatalogDescriptions } from './ReusableFields'
 import { StudioIcon as Icon } from './StudioIcon'
 import { CertificatePaper } from './CertificatePaper'
 import { IconographyCapture } from './IconographyCapture'
@@ -10,12 +12,9 @@ import { IconographySummary } from './IconographySummary'
 const stages = ['Datos de la obra', 'Elaboración', 'Captura de grecas', 'Selección de tiras', 'Formato del certificado']
 const identity: Array<{ key: TextField; label: string; hint: string; required?: boolean }> = [
   { key: 'obra', label: 'Nombre de la obra', hint: 'Ej. Fusión toro-caracol', required: true },
-  { key: 'autor', label: 'Artesano o taller responsable', hint: 'Nombre del autor o del taller', required: true },
   { key: 'origen', label: 'Lugar de origen', hint: 'Ej. San Martín Tilcajete, Oaxaca' },
 ]
 const process: Array<{ key: TextField; label: string; hint: string; multiline?: boolean }> = [
-  { key: 'materiales', label: 'Materiales', hint: 'Ej. Madera de copal y pigmentos', multiline: true },
-  { key: 'tecnicas', label: 'Técnicas de elaboración', hint: 'Ej. Tallado y pintura a mano', multiline: true },
   { key: 'tiempoElaboracion', label: 'Tiempo de elaboración', hint: 'Ej. 11 meses' },
   { key: 'medidas', label: 'Dimensiones', hint: 'Ej. 30 × 18 × 12 cm' },
   { key: 'descripcion', label: 'Descripción general', hint: 'Características de la pieza...', multiline: true },
@@ -48,9 +47,10 @@ const stepHelp = [
   'Configura la orientación y las páginas.',
 ] as const
 
-export function CertificateWizard({ page, values, setValues, onBack, onPreview, onSave, saving, feedback, editing }: {
+export function CertificateWizard({ page, values, setValues, history, onBack, onPreview, onSave, saving, feedback, editing }: {
   page: 'crear' | 'vista'
   values: CertificateFields
+  history: Certificate[]
   setValues: Dispatch<SetStateAction<CertificateFields>>
   onBack: () => void
   onPreview: () => void
@@ -61,6 +61,15 @@ export function CertificateWizard({ page, values, setValues, onBack, onPreview, 
 }) {
   const [step, setStep] = useState(0)
   const [hint, setHint] = useState('')
+  const artisans = suggestedArtisans(history)
+  const materialSuggestions = suggestedTags(history, 'material')
+  const techniqueSuggestions = suggestedTags(history, 'technique')
+  function updateCatalog(kind: 'material' | 'technique', items: CatalogDetail[]) {
+    const names = items.map(item => item.name).join(', ')
+    setValues(previous => kind === 'material'
+      ? { ...previous, materialItems: items, materiales: names }
+      : { ...previous, techniqueItems: items, tecnicas: names })
+  }
   function setField(field: TextField, value: string) {
     setValues(previous => ({ ...previous, [field]: value }))
     setHint('')
@@ -115,12 +124,25 @@ export function CertificateWizard({ page, values, setValues, onBack, onPreview, 
       </div>
       <form className="field-list wizard-form" onSubmit={next} noValidate>
         {step === 0 && <>
-          {identity.map(item => <Field key={item.key} item={item} value={values[item.key]}
-            onChange={value => setField(item.key, value)}/>)}
-          <p className="flow-muted-note">Solo lo fundamental para identificar la pieza. Después registraremos sus detalles.</p>
+          <Field item={identity[0]} value={values.obra} onChange={value => setField('obra', value)}/>
+          <ArtisanCombobox value={values.autor} suggestions={artisans}
+            onChange={name => setField('autor', name)}/>
+          <Field item={identity[1]} value={values.origen} onChange={value => setField('origen', value)}/>
+          <p className="flow-muted-note">Los artesanos guardados aparecerán como sugerencias para las próximas piezas.</p>
         </>}
-        {step === 1 && process.map(item => <Field key={item.key} item={item} value={values[item.key]}
-          onChange={value => setField(item.key, value)}/>)}
+        {step === 1 && <>
+          <TagInput title="Materiales" hint="Selecciona los materiales que se usaron o añade uno nuevo."
+            items={values.materialItems} suggestions={materialSuggestions}
+            onChange={items => updateCatalog('material', items)}/>
+          <TagInput title="Técnicas de elaboración" hint="Puedes reutilizar técnicas de otras piezas."
+            items={values.techniqueItems} suggestions={techniqueSuggestions}
+            onChange={items => updateCatalog('technique', items)}/>
+          {process.map(item => <Field key={item.key} item={item} value={values[item.key]}
+            onChange={value => setField(item.key, value)}/>)}
+          <CatalogDescriptions materials={values.materialItems} techniques={values.techniqueItems}
+            onMaterials={items => updateCatalog('material', items)}
+            onTechniques={items => updateCatalog('technique', items)}/>
+        </>}
         {step === 2 && <IconographyCapture value={values} onUpdate={setValues}/>}
         {step === 3 && <IconographySelection value={values} onUpdate={setValues} onGoCapture={() => jump(2)}/>}
         {step === 4 && <>
