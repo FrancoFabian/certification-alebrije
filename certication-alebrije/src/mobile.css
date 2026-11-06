@@ -6,3 +6,11 @@
 @media(min-width:600px){body{background:#171717}.studio-shell{width:min(100%,460px);margin:auto;min-height:100svh;box-shadow:0 0 60px rgba(0,0,0,.27)}.hero-copy{padding-top:75px}.studio-light{padding:28px 27px 36px}.studio-dark{padding:38px 27px 75px}.mobile-nav{width:420px}.certificate-paper{min-height:630px}}
 @media(max-width:350px){.hero-copy h1{font-size:45px;letter-spacing:-3px}.hero-copy{padding-top:40px}.hero-cta b{font-size:20px}.brand-bar>small{display:none}.paper-stage{padding:15px 9px}.certificate-paper{padding:17px 15px}.certificate-paper h2{font-size:24px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+.install-pwa{display:flex;align-items:center;flex-wrap:wrap;gap:13px;padding:16px;margin-top:22px;border-radius:20px;background:#20261d;border:1px solid #394831}
+.install-pwa-copy{min-width:0;flex:1 1 145px;display:flex;flex-direction:column;gap:5px}
+.install-pwa-copy strong{font-size:14px;letter-spacing:-.2px;color:#f4f8ef}
+.install-pwa-copy p{font-size:11px;line-height:1.4;color:#aab9a2;margin:0}
+.install-pwa>button{border:1px solid #c4fa68;color:#12200d;background:#c4fa68;border-radius:12px;padding:11px 12px;min-height:44px;font-size:12px;font-weight:750}
+.install-pwa-help{flex-basis:100%;border-top:1px solid #42523a;padding-top:12px;color:#f2f7ed;font-size:12px;line-height:1.5}
+.install-pwa-help small{display:block;margin-top:7px;color:#b1bfb0;line-height:1.45}
