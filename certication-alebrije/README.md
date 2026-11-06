@@ -17,7 +17,7 @@ Se respetan Bun, bun.lock, React, Vite, TypeScript, Oxlint y la ruta original `c
 ## Formulario: cinco pasos
 
 1. **Datos de la obra:** nombre de la obra y autor/taller (necesarios para avanzar), origen.
-2. **Elaboración:** materiales, técnicas, tiempo invertido, medidas y descripción.
+2. **Elaboración:** tiempo y medidas guiadas primero; después materiales, técnicas y descripción.
 3. **Captura de grecas:** elegir **agente**, **manual** u **omitir**.
    - Agente: guía inicial por frente, lateral derecho, lateral izquierdo, reverso, superior y acercamientos; fotografías originales conservadas en IndexedDB.
    - Manual: opcionalmente subir vistas generales y continuar con tiras/grecas creadas o fotografiadas por el artesano.
@@ -33,6 +33,18 @@ Se respetan Bun, bun.lock, React, Vite, TypeScript, Oxlint y la ruta original `c
 - **Compatibilidad**: los borradores antiguos con texto libre siguen cargándose sin perderlo; el texto anterior se convierte en una etiqueta conservadora y el artesano puede reorganizarla.
 - **Persistencia**: catálogo sugerido derivado de los borradores guardados en IndexedDB. No hay todavía un catálogo en Supabase ni sincronización entre dispositivos.
 - **Pruebas**: `bun test` valida migración, deduplicación y sugerencias, sin instalar librerías adicionales.
+
+## Tiempo y medidas: captura táctil estructurada
+
+El paso **Elaboración** ahora comienza con dos controles pensados para celular:
+
+- **Tiempo de elaboración:** cantidad con botones grandes (+/−), entrada numérica, accesos rápidos (1, 3, 6, 12) y selector de días, semanas, meses o años. Se almacena como `duration.quantity` + `duration.unit`.
+- **Dimensiones:** ancho, alto y profundidad independientes; las tres entradas utilizan teclado decimal y muestran un **volumen isométrico vectorial SVG** que responde a los valores y resalta la dimensión que se está editando.
+- **Unidades:** centímetros, pulgadas y metros. Internamente las longitudes se guardan en **centímetros**, y al cambiar de unidad solo cambia su presentación, no la medida física.
+- **Accesibilidad:** controles grandes para el tacto, etiquetas de lectura, y validación de longitudes positivas. No se inventan medidas ausentes.
+- **Compatibilidad:** los borradores antiguos con tiempo o medidas de texto libre conservan sus cadenas; al sustituirlos con campos estructurados, el texto resumido sigue disponible para la vista previa.
+- **Costo y compatibilidad:** render SVG sin Three.js, WebGL ni dependencias nuevas; adecuado para la PWA móvil. El gráfico es un esquema isométrico, **no una reproducción exacta ni a escala certificada de la pieza**.
+- **Pruebas:** `bun test` valida formatos, normalización, unidades y borradores anteriores.
 
 ## Persistencia actual
 
