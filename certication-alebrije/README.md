@@ -16,14 +16,14 @@ Se respetan Bun, bun.lock, React, Vite, TypeScript, Oxlint y la ruta original `c
 
 ## Formulario: cinco pasos
 
-1. **Identidad:** nombre de la obra y autor/taller (necesarios para avanzar), origen.
+1. **Datos de la obra:** nombre de la obra y autor/taller (necesarios para avanzar), origen.
 2. **Elaboración:** materiales, técnicas, tiempo invertido, medidas y descripción.
-3. **Grecas:** elegir **agente**, **manual** u **omitir**.
+3. **Captura de grecas:** elegir **agente**, **manual** u **omitir**.
    - Agente: guía inicial por frente, lateral derecho, lateral izquierdo, reverso, superior y acercamientos; fotografías originales conservadas en IndexedDB.
    - Manual: opcionalmente subir vistas generales y continuar con tiras/grecas creadas o fotografiadas por el artesano.
    - Omitir: no mostrar la iconografía en el certificado, sin borrar la información guardada.
-4. **Selección:** conservar o excluir cada tira sin perder el material de referencia; ordenar y clasificar como principal o anexo. Nombre y significado son opcionales y los aporta el artesano.
-5. **Documento:** orientación vertical/horizontal y preferencia de anexo automático, siempre o con confirmación. Vista previa conceptual.
+4. **Selección de tiras:** conservar o excluir cada tira sin perder el material de referencia; ordenar y clasificar como principal o anexo. Nombre y significado son opcionales y los aporta el artesano.
+5. **Formato del certificado:** orientación vertical/horizontal y preferencia de anexo automático, siempre o con confirmación. Vista previa conceptual.
 
 ## Persistencia actual
 
@@ -41,6 +41,25 @@ Cuando exista la integración, el agente debe:
 - **No inferir ni presentar como hechos significados culturales no corroborados.** El campo de significado es del artesano.
 
 El contrato técnico de visión y la generación/rectificación de imágenes quedan pendientes de una API segura del lado servidor. No almacenar claves de proveedor en la PWA.
+
+## Probar la PWA instalada desde un celular (VS Code Tunnel)
+
+Desde el directorio `certication-alebrije/`, detener primero `bun run dev` (Ctrl+C) y ejecutar:
+
+```bash
+bun install --frozen-lockfile
+bun run build
+bun scripts/verify-pwa.mjs
+bun run preview --host 0.0.0.0 --port 5173
+```
+
+Usar el panel **Ports** de VS Code para reenviar el puerto 5173 y abrir la **URL HTTPS** del túnel directamente en Chrome Android o Safari iOS (no dentro de la vista previa embebida del editor).
+
+- **Android:** menú de Chrome ⋮ → Instalar aplicación / Añadir a pantalla principal. Si el navegador permite el aviso nativo, también puede aparecer desde la propia aplicación.
+- **iPhone:** Safari → Compartir → Añadir a pantalla de inicio.
+- El service worker se registra solo en el build de producción (modo preview); `bun run dev` NO debe usarse como prueba de funcionamiento offline.
+- Para probar: instalar, abrir y, tras cargar completamente la app, activar modo avión y verificar que abre. Los datos siguen en IndexedDB.
+- **Advertencia:** los túneles de desarrollo pueden cambiar de URL o cerrarse. No son hosting permanente; los datos locales quedan asociados al origen exacto. No se debe usar el túnel como sistema productivo ni exponer fotos de clientes sin control de acceso.
 
 ## Limitaciones actuales
 
