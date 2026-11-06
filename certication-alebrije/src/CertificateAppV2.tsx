@@ -9,6 +9,7 @@ import './mobile.css'
 import './iconography.css'
 import './wizard.css'
 import './catalog.css'
+import './measure-controls.css'
 
 type Page = 'inicio' | 'crear' | 'vista' | 'archivo'
 function displayDate(iso: string) {
